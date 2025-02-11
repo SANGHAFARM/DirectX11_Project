@@ -30,6 +30,7 @@ namespace Blue
 		//DXGI_SWAP_EFFECT SwapEffect;
 		//UINT Flags;
 
+		// 스왑 체인 정보 구조체
 		DXGI_SWAP_CHAIN_DESC swapChainDesc = { };
 		swapChainDesc.Windowed = true;			// 창 모드
 		swapChainDesc.OutputWindow = window;
@@ -65,7 +66,7 @@ namespace Blue
 			__debugbreak();
 		}
 
-		// 렌더 타겟 뷰
+		// 렌더 타겟 뷰 생성
 		ID3D11Texture2D* backbuffer = nullptr;
 		//swapChain->GetBuffer(0, __uuidof(backbuffer), reinterpret_cast<void**>(&backbuffer));
 		result = swapChain->GetBuffer(0, IID_PPV_ARGS(&backbuffer));
@@ -130,7 +131,7 @@ namespace Blue
 		indexbufferDesc.ByteWidth = sizeof(int) * 3;
 		indexbufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
-		// 정점 데이터
+		// 인덱스 데이터
 		D3D11_SUBRESOURCE_DATA indexData = {};
 		indexData.pSysMem = indices;
 
@@ -217,7 +218,7 @@ namespace Blue
 		context->ClearRenderTargetView(renderTargetView, color);
 
 		// Draw/Render
-		// 드로우(Draw)
+		// 드로우 (Draw)
 
 		// EndScene/Present
 		// 버퍼 교환
