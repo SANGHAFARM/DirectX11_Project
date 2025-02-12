@@ -1,4 +1,7 @@
 #include "Renderer.h"
+#include "../Math/Vector3.h"
+#include "TriangleMesh.h"
+#include "QuadMesh.h"
 
 #include <vector>
 #include <d3dcompiler.h>
@@ -8,7 +11,7 @@ namespace Blue
 	Renderer::Renderer(uint32 width, uint32 height, HWND window)
 	{
 		// 장치 생성에 사용하는 옵션
-		uint32 flag = 0;
+		uint32 flag = 0u;
 
 #if _DEBUG
 		flag |= D3D11_CREATE_DEVICE_DEBUG;
@@ -90,120 +93,12 @@ namespace Blue
 		viewport.TopLeftX = 0.0f;
 		viewport.TopLeftY = 0.0f;
 		viewport.Width = (float)width;
-		viewport.Height = (float)width;
+		viewport.Height = (float)height;
 		viewport.MaxDepth = 1.0f;
 		viewport.MinDepth = 0.0f;
 
 		// 뷰포트 설정
 		context->RSSetViewports(1, &viewport);
-
-		// 정점 데이터 생성
-		// vertex -> vertices
-		float vertices[] = 
-		{ 
-			0.0f, 0.5f, 0.5f, 
-			0.5f, -0.5f, 0.5f, 
-			-0.5f, -0.5f, 0.5f
-		};
-
-		// @Temp: 임시 리소스 생성
-		// 버퍼 (Buffer) - 메모리 덩어리
-		D3D11_BUFFER_DESC vertexbufferDesc = {};
-		vertexbufferDesc.ByteWidth = sizeof(float) * 3 * 3;
-		vertexbufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-		// 정점 데이터
-		D3D11_SUBRESOURCE_DATA vertexData = {};
-		vertexData.pSysMem = vertices;
-
-		result = device->CreateBuffer(&vertexbufferDesc, &vertexData, &vertexBuffer);
-		// 결과 확인
-		if (FAILED(result))
-		{
-			MessageBoxA(nullptr, "Failed to create vertex buffer.", "Error", MB_OK);
-			__debugbreak();
-		}
-
-		// 인덱스(색인) 버퍼 생성 (정점을 조립하는 순서)
-		int indices[] = { 0, 1, 2 };
-
-		D3D11_BUFFER_DESC indexbufferDesc = {};
-		indexbufferDesc.ByteWidth = sizeof(int) * 3;
-		indexbufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-
-		// 인덱스 데이터
-		D3D11_SUBRESOURCE_DATA indexData = {};
-		indexData.pSysMem = indices;
-
-		// 인덱스 버퍼 생성
-		result = device->CreateBuffer(&indexbufferDesc, &indexData, &indexBuffer);
-		// 결과 확인
-		if (FAILED(result))
-		{
-			MessageBoxA(nullptr, "Failed to create index buffer.", "Error", MB_OK);
-			__debugbreak();
-		}
-
-		// 쉐이더 컴파일
-		ID3DBlob* vertexShaderBuffer = nullptr;
-		result = D3DCompileFromFile(
-			TEXT("VertexShader.hlsl"),
-			nullptr,
-			nullptr,
-			"main",
-			"vs_5_0",
-			0, 0, 
-			&vertexShaderBuffer, nullptr
-		);
-		// 결과 확인
-		if (FAILED(result))
-		{
-			MessageBoxA(nullptr, "Failed to compile vertex shader.", "Error", MB_OK);
-			__debugbreak();
-		}
-
-		// 쉐이더 생성
-		result = device->CreateVertexShader(
-			vertexShaderBuffer->GetBufferPointer(),
-			vertexShaderBuffer->GetBufferSize(),
-			nullptr,
-			&vertexShader
-		);
-		// 결과 확인
-		if (FAILED(result))
-		{
-			MessageBoxA(nullptr, "Failed to create vertex shader.", "Error", MB_OK);
-			__debugbreak();
-		}
-
-		// 입력 레이아웃
-		// 정점 쉐이더에 전달할 정점 데이터가 어떻게 생겼는지 알려줌
-		//LPCSTR SemanticName;
-		//UINT SemanticIndex;
-		//DXGI_FORMAT Format;
-		//UINT InputSlot;
-		//UINT AlignedByteOffset;
-		//D3D10_INPUT_CLASSIFICATION InputSlotClass;
-		//UINT InstanceDataStepRate;
-		D3D11_INPUT_ELEMENT_DESC inputDesc[] =
-		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, 
-			D3D11_INPUT_PER_VERTEX_DATA, 0 }
-		};
-
-		result = device->CreateInputLayout(
-			inputDesc,
-			1,
-			vertexShaderBuffer->GetBufferPointer(),
-			vertexShaderBuffer->GetBufferSize(),
-			&inputLayout
-		);
-		// 결과 확인
-		if (FAILED(result))
-		{
-			MessageBoxA(nullptr, "Failed to create input layout.", "Error", MB_OK);
-			__debugbreak();
-		}
 	}
 
 	Renderer::~Renderer()
@@ -212,16 +107,27 @@ namespace Blue
 
 	void Renderer::Draw()
 	{
+		// @임시/Test
+		if (triangleMesh == nullptr)
+		{
+			triangleMesh = std::make_unique<TriangleMesh>();
+		}
+
+		//if (quadMesh == nullptr)
+		//{
+		//	quadMesh = std::make_unique<QuadMesh>();
+		//}
+
 		// BeginScene
 		// 그리기 전 작업 (지우기/Clear)
-		float color[] = {0.6f, 0.7f, 0.8f, 1.0f};
+		float color[] = { 0.6f, 0.7f, 0.8f, 1.0f };
 		context->ClearRenderTargetView(renderTargetView, color);
 
-		// Draw/Render
-		// 드로우 (Draw)
+		// 드로우
+		triangleMesh->Draw();
+		//quadMesh->Draw();
 
-		// EndScene/Present
-		// 버퍼 교환
+		// 버퍼 교환 (EndScene/Present)
 		swapChain->Present(1u, 0u);
 	}
 }
