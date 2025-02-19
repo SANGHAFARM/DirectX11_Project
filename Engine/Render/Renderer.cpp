@@ -108,15 +108,15 @@ namespace Blue
 	void Renderer::Draw()
 	{
 		// @임시/Test
-		if (triangleMesh == nullptr)
-		{
-			triangleMesh = std::make_unique<TriangleMesh>();
-		}
-
-		//if (quadMesh == nullptr)
+		//if (triangleMesh == nullptr)
 		//{
-		//	quadMesh = std::make_unique<QuadMesh>();
+		//	triangleMesh = std::make_unique<TriangleMesh>();
 		//}
+
+		if (quadMesh == nullptr)
+		{
+			quadMesh = std::make_unique<QuadMesh>();
+		}
 
 		// BeginScene
 		// 그리기 전 작업 (지우기/Clear)
@@ -124,8 +124,8 @@ namespace Blue
 		context->ClearRenderTargetView(renderTargetView, color);
 
 		// 드로우
-		triangleMesh->Draw();
-		//quadMesh->Draw();
+		//triangleMesh->Draw();
+		quadMesh->Draw();
 
 		// 버퍼 교환 (EndScene/Present)
 		swapChain->Present(1u, 0u);
