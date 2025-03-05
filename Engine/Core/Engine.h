@@ -11,6 +11,8 @@ namespace Blue
 {
 	class Window;
 	class Renderer;
+	class ShaderLoader;
+	class TextureLoader;
 
 	// ¿£Áø Å¬·¡½º
 	class Engine
@@ -38,6 +40,12 @@ namespace Blue
 
 		// ·»´õ·¯ °´Ã¼
 		std::shared_ptr<Renderer> renderer;
+
+		// ¼ÎÀÌ´õ ·Î´õ °´Ã¼
+		std::unique_ptr<ShaderLoader> shaderLoader;
+
+		// ÅØ½ºÃ³ ·Î´õ °´Ã¼
+		std::unique_ptr<TextureLoader> textureLoader;
 
 		// ½Ì±ÛÅæ °´Ã¼
 		static Engine* instance;
