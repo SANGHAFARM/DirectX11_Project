@@ -56,6 +56,9 @@ namespace Blue
 		// 사각형 메시 객체
 		std::unique_ptr<QuadMesh> quadMesh;
 
+		// 사각형 메시 객체2
+		std::unique_ptr<QuadMesh> quadMesh2;
+
 		//// 입력 레이아웃
 		//ID3D11InputLayout* inputlayout = nullptr;
 

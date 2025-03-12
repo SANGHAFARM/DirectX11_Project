@@ -13,6 +13,7 @@ namespace Blue
 	class Renderer;
 	class ShaderLoader;
 	class TextureLoader;
+	class ModelLoader;
 
 	// ¿£Áø Å¬·¡½º
 	class Engine
@@ -46,6 +47,9 @@ namespace Blue
 
 		// ÅØ½ºÃ³ ·Î´õ °´Ã¼
 		std::unique_ptr<TextureLoader> textureLoader;
+
+		// ¸ðµ¨ ·Î´õ °´Ã¼
+		std::unique_ptr<ModelLoader> modelLoader;
 
 		// ½Ì±ÛÅæ °´Ã¼
 		static Engine* instance;

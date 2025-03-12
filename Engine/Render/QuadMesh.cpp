@@ -1,7 +1,11 @@
 #include "QuadMesh.h"
+
 #include "Shader/Shader.h"
 #include "Shader/TextureMappingShader.h"
+
 #include "Resource/ShaderLoader.h"
+#include "Resource/ModelLoader.h"
+
 #include "Math/Matrix4.h"
 #include "Math/Vector3.h"
 
@@ -27,7 +31,14 @@ namespace Blue
 		//vertices[2].position = vertices[2].position * Matrix4::Scale(0.5f);
 		//vertices[3].position = vertices[3].position * Matrix4::Scale(0.5f);
 
-		meshes.emplace_back(std::make_shared<MeshData>(vertices, indices));
+		//meshes.emplace_back(std::make_shared<MeshData>(vertices, indices));
+		// 모델 로드
+		std::weak_ptr<MeshData> mesh;
+		if (ModelLoader::Get().Load("quad.obj", mesh))
+		{
+			meshes.emplace_back(mesh);
+		}
+
 		//shaders.emplace_back(std::make_shared<TextureMappingShader>("T_coord.png"));
 		std::weak_ptr<TextureMappingShader> shader;
 		if (ShaderLoader::Get().Load<TextureMappingShader>(shader, "T_coord.png"))
@@ -41,6 +52,9 @@ namespace Blue
 		// 회전 처리
 		static float angle = 0.0f;
 		angle += 60.0f * deltaTime;
+
+		// 회전 적용
+		//transform.rotation.z = angle;
 
 		//Rotate(angle);
 	}
@@ -72,6 +86,6 @@ namespace Blue
 		result[3].position = vertices[3].position * rotation;
 
 		// 메시의 정점 버퍼 업데이트
-		meshes[0]->UpdateVertexBuffer(result);
+		meshes[0].lock()->UpdateVertexBuffer(result);
 	}
 }
