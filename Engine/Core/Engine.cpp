@@ -6,9 +6,13 @@
 #include "Resource/TextureLoader.h"
 #include "Resource/ModelLoader.h"
 
+#include "Level/Level.h"
+
+#include <iostream>
+
 namespace Blue
 {
-	// ½Ì±ÛÅæ °´Ã¼ ¼³Á¤
+	// ì‹±ê¸€í†¤ ê°ì²´ ì„¤ì •
 	Engine* Engine::instance = nullptr;
 
 	Engine::Engine(
@@ -17,22 +21,22 @@ namespace Blue
 		const std::wstring& title,
 		HINSTANCE hInstance)
 	{
-		// ½Ì±ÛÅæ °´Ã¼ °ª ¼³Á¤
+		// ì‹±ê¸€í†¤ ê°ì²´ ê°’ ì„¤ì •
 		instance = this;
 
-		// Ã¢ °´Ã¼ »ı¼º
+		// ì°½ ê°ì²´ ìƒì„±
 		window = std::make_shared<Window>(width, height, title, hInstance, WindowProc);
 
-		// ¼ÎÀÌ´õ ·Î´õ °´Ã¼ »ı¼º
+		// ì…°ì´ë” ë¡œë” ê°ì²´ ìƒì„±
 		shaderLoader = std::make_unique<ShaderLoader>();
 
-		// ÅØ½ºÃ³ ·Î´õ °´Ã¼ »ı¼º
+		// í…ìŠ¤ì²˜ ë¡œë” ê°ì²´ ìƒì„±
 		textureLoader = std::make_unique<TextureLoader>();
 
-		// ¸ğµ¨ ·Î´õ °´Ã¼ »ı¼º
+		// ëª¨ë¸ ë¡œë” ê°ì²´ ìƒì„±
 		modelLoader = std::make_unique<ModelLoader>();
 
-		// ·»´õ·¯ »ı¼º
+		// ë Œë”ëŸ¬ ìƒì„±
 		renderer = std::make_shared<Renderer>(width, height, window->Handle());
 	}
 
@@ -42,41 +46,86 @@ namespace Blue
 
 	void Engine::Run()
 	{
-		// ¸Ş½ÃÁö Ã³¸® ·çÇÁ
+		// íƒ€ì´ë¨¸ (í‹±/ë¸íƒ€íƒ€ì„)
+		LARGE_INTEGER currentTime;
+		LARGE_INTEGER previousTime;
+		LARGE_INTEGER frequency;
+
+		// í•˜ë“œì›¨ì–´ íƒ€ì´ë¨¸ì˜ í•´ìƒë„ ê°’ (ê¸°ì¤€ ë‹¨ìœ„)
+		QueryPerformanceFrequency(&frequency);
+
+		// í˜„ì¬ ì‹œê°„
+		QueryPerformanceCounter(&currentTime);
+		previousTime = currentTime;
+
+		// í”„ë ˆì„ ê³„ì‚°ì— ì‚¬ìš©í•  ë³€ìˆ˜
+		float targetFrameRate = 120.0f;
+		// ê³ ì • í”„ë ˆì„ ì†ë„ë¥¼ ì‚¬ìš©í•˜ê¸° ìœ„í•œ ë³€ìˆ˜
+		float oneFrameTime = 1.0f/ targetFrameRate;
+		
+		// ë©”ì‹œì§€ ì²˜ë¦¬ ë£¨í”„
 		MSG msg = {};
 		while (msg.message != WM_QUIT)
 		{
-			// Ã¢¿¡ ¸Ş½ÃÁö°¡ µé¾î¿Ã ¶§ ½ÇÇà
+			// ì°½ì— ë©”ì‹œì§€ê°€ ë“¤ì–´ì˜¬ ë•Œ ì‹¤í–‰
 			if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 			{
-				// ¸Ş½ÃÁö ¹ø¿ª
+				// ë©”ì‹œì§€ ë²ˆì—­
 				TranslateMessage(&msg);
 
-				// ¸Ş½ÃÁö Àü´Ş
+				// ë©”ì‹œì§€ ì „ë‹¬
 				DispatchMessage(&msg);
 			}
-			// Ã¢¿¡ ¸Ş½ÃÁö°¡ ¾øÀ» ¶§ ´Ù¸¥ ÀÛ¾÷ Ã³¸®
+			// ì°½ì— ë©”ì‹œì§€ê°€ ì—†ì„ ë•Œ ë‹¤ë¥¸ ì‘ì—… ì²˜ë¦¬
 			else
 			{
-				// ¿£Áø ·çÇÁ
-				renderer->Draw();
+				// í˜„ì¬ ì‹œê°„ ê°€ì ¸ì˜¤ê¸°
+				QueryPerformanceCounter(&currentTime);
+
+				// í”„ë ˆì„ ì‹œê°„ ê³„ì‚°
+				float deltaTime = (float)(currentTime.QuadPart - previousTime.QuadPart) / (float)frequency.QuadPart;
+
+				// í”„ë ˆì„ ì œí•œ
+				if (deltaTime >= oneFrameTime)
+				{
+					// ì¶œë ¥
+					std::cout << "DeltaTime: " << deltaTime << " | OneFrameTime: " << oneFrameTime << " | FPS: " << (int)ceil(1.0f / deltaTime) << "\n"; 
+					
+					// ì—”ì§„ ë£¨í”„
+					// ë ˆë²¨ ì²˜ë¦¬
+					if (mainLevel)
+					{
+						mainLevel->BeginPlay();
+						mainLevel->Tick(1.0f / 60.f);
+						renderer->Draw(mainLevel);
+					}
+					
+					// í”„ë ˆì„ ì‹œê°„ ì—…ë°ì´íŠ¸
+					previousTime = currentTime;
+				}
 			}
 		}
 	}
 
+	void Engine::SetLevel(std::shared_ptr<Level> newLevel)
+	{
+		// ë©”ì¸ ë ˆë²¨ ì„¤ì •
+		mainLevel = newLevel;
+	}
+
 	LRESULT Engine::WindowProc(HWND hande, UINT message, WPARAM wparam, LPARAM lparam)
 	{
-		// ¸Ş½ÃÁö Ã³¸®
+		// ë©”ì‹œì§€ ì²˜ë¦¬
 		switch (message)
 		{
-			// Ã¢ÀÌ »èÁ¦µÇ¸é ½ÇÇàµÊ
+			// ì°½ì´ ì‚­ì œë˜ë©´ ì‹¤í–‰ë¨
 		case WM_DESTROY:
-			// ÇÁ·Î±×·¥ Á¾·á ¸Ş½ÃÁö¸¦ ¹ßÇà
+			// í”„ë¡œê·¸ë¨ ì¢…ë£Œ ë©”ì‹œì§€ë¥¼ ë°œí–‰
 			PostQuitMessage(0);
 			return 0;
 		}
 
-		// ±âº» ¸Ş½ÃÁö Ã³¸®
+		// ê¸°ë³¸ ë©”ì‹œì§€ ì²˜ë¦¬
 		return DefWindowProc(hande, message, wparam, lparam);
 	}
 

@@ -1,5 +1,5 @@
 #include "Core/Engine.h"
-//#include "Math/Vector2.h"
+#include "Level/DemoLevel.h"
 
 #include <iostream>
 
@@ -19,27 +19,16 @@ using namespace Blue;
 //    return 0;
 //}
 
-#include "Core/Common.h"
-#include <typeinfo>
-#include "Shader/Shader.h"
-#include "Shader/TextureMappingShader.h"
-
-template<typename T, typename std::enable_if<std::is_base_of<Shader, T>::value>::type*>
-void TestClass()
-{
-	std::boolalpha(std::cout);
-	std::cout << typeid(T).name() << "\n";
-	std::cout << std::is_base_of<Shader, T>::value << "\n";
-}
+/*
+ * IA (입력 정리) -> VS ...(Option) -> RS/보간기 -> PS -> OM (출력 조립)
+ * - VS (정점 변환 Object->World->View->Projection)
+ * - PS (조명 처리) - PBR / 디퓨즈 / 스페큘러
+ * - 엔진 개발자 (렌더러 개발자)
+ */
 
 int main()
 {
-	//std::boolalpha(std::cout);
-	//std::cout << typeid(Blue::Engine).name() << "\n";
-	//std::cout << std::is_base_of<Shader, TextureMappingShader>::value << "\n";
-	
-	//ThrowIfFailed(E_FAIL, TEXT("Test"));
-
 	Engine engine(1280, 800, TEXT("Engine Demo"), GetModuleHandle(nullptr));
+	engine.SetLevel(std::make_shared<DemoLevel>());
 	engine.Run();
 }

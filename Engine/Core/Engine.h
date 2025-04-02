@@ -14,6 +14,7 @@ namespace Blue
 	class ShaderLoader;
 	class TextureLoader;
 	class ModelLoader;
+	class Level;
 
 	// 엔진 클래스
 	class Engine
@@ -24,6 +25,9 @@ namespace Blue
 
 		// 엔진 실행 함수
 		void Run();
+
+		// 메인 레벨 설정 함수
+		void SetLevel(std::shared_ptr<Level> newLevel);
 
 		// 윈도우 메시지 처리 루프
 		static LRESULT CALLBACK WindowProc(HWND hande, UINT message, WPARAM wparam, LPARAM lparam);
@@ -50,6 +54,9 @@ namespace Blue
 
 		// 모델 로더 객체
 		std::unique_ptr<ModelLoader> modelLoader;
+
+		// 메인 레벨
+		std::shared_ptr<Level> mainLevel;	
 
 		// 싱글톤 객체
 		static Engine* instance;

@@ -12,6 +12,7 @@ namespace Blue
 	//class Shader;
 	class TriangleMesh;
 	class QuadMesh;
+	class Level;
 
 	// 그래픽 카드에서 처리하는 일/리소스를 관리하는 클래스
 	// RHI - Render Hardware Interface
@@ -25,7 +26,7 @@ namespace Blue
 		~Renderer();
 
 		// 그리기 함수
-		void Draw();
+		void Draw(std::shared_ptr<Level> level);
 
 	private:
 		// 리소스
@@ -39,31 +40,5 @@ namespace Blue
 
 		// 뷰포트
 		D3D11_VIEWPORT viewport;
-
-		// @Temp: 임시
-		// 정점 버퍼 (정점 정보를 전달하는 데 사용)
-		ID3D11Buffer* vertexBuffer = nullptr;
-
-		// 인덱스 버퍼 (정점을 조립할 때 정점의 순서를 전달
-		ID3D11Buffer* indexBuffer = nullptr;
-
-		// 쉐이더 객체
-		//std::unique_ptr<Shader> shader;
-
-		// 삼각형 메시 객체
-		std::unique_ptr<TriangleMesh> triangleMesh;
-
-		// 사각형 메시 객체
-		std::unique_ptr<QuadMesh> quadMesh;
-
-		// 사각형 메시 객체2
-		std::unique_ptr<QuadMesh> quadMesh2;
-
-		//// 입력 레이아웃
-		//ID3D11InputLayout* inputlayout = nullptr;
-
-		//// 쉐이더 객체
-		//ID3D11VertexShader* vertexShader = nullptr;
-		//ID3D11PixelShader* pixelShader = nullptr;
 	};
 }

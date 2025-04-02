@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/Engine/Core/Engine.cpp" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/Engine/Core/Engine.h" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/Engine/Main.cpp" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/Engine/Math/Transform.cpp" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/Engine/Math/Transform.h" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/Engine/Render/Mesh.cpp" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/Engine/Render/Mesh.h" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/Engine/Render/QuadMesh.cpp" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/Engine/Render/QuadMesh.h" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/Engine/Render/Renderer.cpp" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/Engine/Render/Renderer.h" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/Engine/Render/TriangleMesh.cpp" charset="x-windows-949" />
+  </component>
+</project>
