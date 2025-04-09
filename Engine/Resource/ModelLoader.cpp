@@ -26,7 +26,7 @@ namespace Blue
 			return true;
 		}
 
-		// 파일로드
+		// 파일 로드
 		char path[512] = {};
 		sprintf_s(path, 512, "../Assets/Meshes/%s", name.c_str());
 
@@ -74,7 +74,7 @@ namespace Blue
 			else if (strcmp(header, "vn") == 0)
 			{
 				Vector3 normal;
-				sscanf_s(line, "v %f %f %f", &normal.x, &normal.y, &normal.z);
+				sscanf_s(line, "vn %f %f %f", &normal.x, &normal.y, &normal.z);
 				normals.emplace_back(normal);
 			}
 			else if (strcmp(header, "f") == 0)
@@ -85,9 +85,9 @@ namespace Blue
 
 				sscanf_s(line, "f %d/%d/%d %d/%d/%d %d/%d/%d", &v1, &t1, &n1, &v2, &t2, &n2, &v3, &t3, &n3);
 
-				vertices.emplace_back(positions[v1 - 1], Vector3::One, texCoords[t1 - 1]);
-				vertices.emplace_back(positions[v2 - 1], Vector3::One, texCoords[t2 - 1]);
-				vertices.emplace_back(positions[v3 - 1], Vector3::One, texCoords[t3 - 1]);
+				vertices.emplace_back(positions[v1 - 1], Vector3::One, texCoords[t1 - 1], normals[n1- 1]);
+				vertices.emplace_back(positions[v2 - 1], Vector3::One, texCoords[t2 - 1], normals[n2- 1]);
+				vertices.emplace_back(positions[v3 - 1], Vector3::One, texCoords[t3 - 1], normals[n3- 1]);
 			}
 		}
 

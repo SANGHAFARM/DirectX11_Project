@@ -26,6 +26,9 @@ namespace Blue
 		// 싱글톤 객체 값 설정
 		instance = this;
 
+		// 입력 관리자 객체 생성
+		inputController = std::make_unique<InputController>();
+		
 		// 창 객체 생성
 		window = std::make_shared<Window>(width, height, title, hInstance, WindowProc);
 
@@ -37,9 +40,6 @@ namespace Blue
 
 		// 모델 로더 객체 생성
 		modelLoader = std::make_unique<ModelLoader>();
-
-		// 입력 관리자 객체 생성
-		inputController = std::make_unique<InputController>();
 
 		// 렌더러 생성
 		renderer = std::make_shared<Renderer>(width, height, window->Handle());
@@ -283,5 +283,15 @@ namespace Blue
 	ID3D11DeviceContext& Engine::Context() const
 	{
 		return *renderer->context;
+	}
+
+	uint32 Engine::Width() const
+	{
+		return window->Width();
+	}
+
+	uint32 Engine::Height() const
+	{
+		return window->Height();
 	}
 }

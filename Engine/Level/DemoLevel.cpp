@@ -22,7 +22,7 @@ namespace Blue
 
         // 액터 생성
         std::shared_ptr<QuadActor> actor = std::make_shared<QuadActor>();
-
+        
         // 카메라 액터 생성
         std::shared_ptr<Actor> cameraActor = std::make_shared<Actor>();
         cameraActor->AddComponent(std::make_shared<CameraComponent>());

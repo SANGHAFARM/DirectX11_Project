@@ -13,7 +13,10 @@ namespace Blue
         struct CameraBuffer
         {
             // 뷰 변환 행렬
-            Matrix4 viewMatrix;            
+            Matrix4 viewMatrix;
+
+            // 투영 변환 행렬
+            Matrix4 projectionMatrix;
         };
 
     public:
