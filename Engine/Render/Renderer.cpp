@@ -98,6 +98,10 @@ namespace Blue
 		ThrowIfFailed(swapChain->GetBuffer(0, IID_PPV_ARGS(&backbuffer)), TEXT("Failed to get back buffer."));
 
 		ThrowIfFailed(device->CreateRenderTargetView(backbuffer, nullptr, &renderTargetView), TEXT("Failed to create render target view."));
+
+		// 사용한 리소스 해제
+		backbuffer->Release();
+		backbuffer = nullptr;
 		
 		// 렌더 타겟 뷰 바인딩 (연결)
 		//context->OMSetRenderTargets(1, &renderTargetView, nullptr);
@@ -116,10 +120,40 @@ namespace Blue
 
 	Renderer::~Renderer()
 	{
+		// DX 리소스 해제
+		if (context)
+		{
+			context->Release();
+			context = nullptr;
+		}
+		
+		if (swapChain)
+		{
+			swapChain->Release();
+			swapChain = nullptr;
+		}
+		
+		if (renderTargetView)
+		{
+			renderTargetView->Release();
+			renderTargetView = nullptr;
+		}
+		
+		if (device)
+		{
+			device->Release();
+			device = nullptr;
+		}
 	}
 
 	void Renderer::Draw(std::shared_ptr<Level> level)
 	{
+		// 화면 크기 변경 중일 때는 종료
+		if (isResizing)
+		{
+			return;
+		}
+		
 		// 그리기 전 작업 (BeginScene)
 		context->OMSetRenderTargets(1, &renderTargetView, nullptr);
 
@@ -147,5 +181,53 @@ namespace Blue
 		
 		// 버퍼 교환 (EndScene/Present)
 		swapChain->Present(1u, 0u);
+	}
+
+	void Renderer::OnResize(uint32 width, uint32 height)
+	{
+		// 창 변경으로 인한 리소스 크기 조정
+		if (!device || !context || !swapChain)
+		{
+			return;
+		}
+		
+		isResizing = true;
+		
+		// context 비우기
+		context->ClearState();
+		context->Flush();
+
+		// 렌더타겟 해제
+		if (renderTargetView)
+		{
+			renderTargetView->Release();
+			renderTargetView = nullptr;
+		}
+
+		// 스왑체인 백버퍼 크기 변경
+		ThrowIfFailed(swapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, 0), TEXT("Failed to resize swapchain buffer"));
+
+		// 렌더타겟 재생성
+		ID3D11Texture2D* backbuffer = nullptr;
+		ThrowIfFailed(swapChain->GetBuffer(0, IID_PPV_ARGS(&backbuffer)), TEXT("Failed to get buffer from swapchain"));
+
+		ThrowIfFailed(device->CreateRenderTargetView(backbuffer, nullptr, &renderTargetView), TEXT("Failed to created render target view"));
+
+		backbuffer->Release();
+		backbuffer = nullptr;
+		
+		// 뷰포트 업데이트
+		// 뷰포트 (화면)
+		viewport.TopLeftX = 0.0f;
+		viewport.TopLeftY = 0.0f;
+		viewport.Width = (float)width;
+		viewport.Height = (float)height;
+		viewport.MaxDepth = 1.0f;
+		viewport.MinDepth = 0.0f;
+
+		// 뷰포트 설정
+		context->RSSetViewports(1, &viewport);
+
+		isResizing = false;
 	}
 }

@@ -15,6 +15,7 @@ namespace Blue
 	class TextureLoader;
 	class ModelLoader;
 	class Level;
+	class InputController;
 
 	// 엔진 클래스
 	class Engine
@@ -35,11 +36,20 @@ namespace Blue
 		// 싱글톤 접근 함수
 		static Engine& Get();
 
+		// 화면 크기 변경 이벤트 대응 함수
+		void OnResize(uint32 width, uint32 height);
+
+		// 엔진 종료 함수
+		void Quit();
+
 		// Getter
 		ID3D11Device& Device() const;
 		ID3D11DeviceContext& Context() const;
 
 	protected:
+		// 엔진 종료 플래그
+		bool isQuit = false;
+		
 		// 창 객체
 		std::shared_ptr<Window> window;
 
@@ -55,8 +65,11 @@ namespace Blue
 		// 모델 로더 객체
 		std::unique_ptr<ModelLoader> modelLoader;
 
+		// 입력 관리자 객체
+		std::unique_ptr<InputController> inputController;
+
 		// 메인 레벨
-		std::shared_ptr<Level> mainLevel;	
+		std::shared_ptr<Level> mainLevel;
 
 		// 싱글톤 객체
 		static Engine* instance;
