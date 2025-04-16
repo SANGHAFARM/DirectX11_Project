@@ -85,6 +85,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Actor\Actor.cpp" />
+    <ClCompile Include="Actor\CameraActor.cpp" />
     <ClCompile Include="Actor\QuadActor.cpp" />
     <ClCompile Include="Component\CameraComponent.cpp" />
     <ClCompile Include="Component\Component.cpp" />
@@ -102,6 +103,7 @@
     <ClCompile Include="Render\QuadMesh.cpp" />
     <ClCompile Include="Render\Renderer.cpp" />
     <ClCompile Include="Render\Mesh.cpp" />
+    <ClCompile Include="Render\SphereMesh.cpp" />
     <ClCompile Include="Render\Texture.cpp" />
     <ClCompile Include="Render\TriangleMesh.cpp" />
     <ClCompile Include="Resource\ModelLoader.cpp" />
@@ -113,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor\Actor.h" />
+    <ClInclude Include="Actor\CameraActor.h" />
     <ClInclude Include="Actor\QuadActor.h" />
     <ClInclude Include="Component\CameraComponent.h" />
     <ClInclude Include="Component\Component.h" />
@@ -122,6 +125,7 @@
     <ClInclude Include="Core\InputController.h" />
     <ClInclude Include="Core\Type.h" />
     <ClInclude Include="Core\Window.h" />
+    <ClInclude Include="HLSLShader\Common.hlsli" />
     <ClInclude Include="Level\DemoLevel.h" />
     <ClInclude Include="Level\Level.h" />
     <ClInclude Include="Library\stbi_image.h" />
@@ -132,6 +136,7 @@
     <ClInclude Include="Render\QuadMesh.h" />
     <ClInclude Include="Render\Renderer.h" />
     <ClInclude Include="Render\Mesh.h" />
+    <ClInclude Include="Render\SphereMesh.h" />
     <ClInclude Include="Render\TriangleMesh.h" />
     <ClInclude Include="Resource\ModelLoader.h" />
     <ClInclude Include="Resource\ShaderLoader.h" />

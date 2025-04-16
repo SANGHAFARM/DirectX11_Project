@@ -1,9 +1,12 @@
+#include "Common.hlsli"
+
 struct PixelInput
 {
     float4 position : SV_Position;
     float3 color : COLOR;
     float2 texCoord : TEXCOORD;
     float3 normal : NORMAL;
+    float3 cameraDirection : TEXCOORD1;
 };
 
 // Texture
@@ -22,15 +25,23 @@ float4 main(PixelInput input) : SV_TARGET
     // World Normal
     float3 worldNormal = normalize(input.normal);
     
-    // Dot (Lambert)
-    float lightIntensity = saturate(dot(worldNormal, -lightDir));
+    // Dot (Lambert's cosine law)
+    //float nDotl = saturate(dot(worldNormal, -lightDir));
 
-    float4 finalColor = texColor * lightIntensity;
+    // Half Lambert
+    float nDotl = CalcHalfLambert(worldNormal, lightDir);
+
+    float4 ambient = texColor * float4(0.2f, 0.2f, 0.2f, 1);
+    float4 diffuse = texColor * nDotl;
+    float4 finalColor = ambient + diffuse;
     
-	//return float4(1.0f, 0.0f, 0.0f, 1.0f);
-    //return float4(input.color, 1.0f);
-    //return float4(input.texCoord, 0.0f, 1.0f);
-    //return float4(lightIntensity, lightIntensity, lightIntensity, 1);
+    // Phong (specular)
+    //float specular = CalcPhong(worldNormal, lightDir, input.cameraDirection);
 
+    // Blinn-Phong (specular)
+    float specular = CalcBlinnPhong(worldNormal, lightDir, input.cameraDirection);
+    
+    finalColor += float4(0.4f, 0.6f, 0.8f, 1) * specular;    
+    //return float4(specular, specular, specular, 1);
     return finalColor;
 }

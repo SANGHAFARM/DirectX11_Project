@@ -19,7 +19,7 @@ namespace Blue
         data.viewMatrix = Matrix4::Transpose(data.viewMatrix);
         
         // 투영 행렬 설정
-        data.projectionMatrix = Matrix4::Perspective(90.0f, (float)Engine::Get().Width(), (float)Engine::Get().Height(), 0.1f, 100.0f);
+        data.projectionMatrix = Matrix4::Perspective(60.0f, (float)Engine::Get().Width(), (float)Engine::Get().Height(), 0.1f, 100.0f);
         data.projectionMatrix = Matrix4::Transpose(data.projectionMatrix);
 
         // 데이터 담아서 버퍼 생성
@@ -42,55 +42,7 @@ namespace Blue
     {
         Component::Tick(deltaTime);
 
-        // 입력 관리자 포인터 저장
-        static InputController& input = InputController::Get();
         
-        // @Test 입력 테스트
-        if (InputController::Get().IsKeyDown(VK_ESCAPE))
-        {
-            // 팝업 창 띄우기
-            if (MessageBox(nullptr, TEXT("Want to Quit"), TEXT("Quit Engine"), MB_YESNO) == IDYES)
-            {
-                Engine::Get().Quit();
-            }
-        }
-
-        // 카메라 이동 처리
-        if (input.IsKey('A') || input.IsKey(VK_LEFT))
-        {
-            // 왼쪽 이동
-            owner->transform.position.x -= 1.0f * deltaTime;
-        }
-        
-        if (input.IsKey('D') || input.IsKey(VK_RIGHT))
-        {
-            // 오른쪽 이동
-            owner->transform.position.x += 1.0f * deltaTime;
-        }
-
-        if (input.IsKey('W') || input.IsKey(VK_UP))
-        {
-            // 위쪽 이동
-            owner->transform.position.z += 1.0f * deltaTime;
-        }
-
-        if (input.IsKey('S') || input.IsKey(VK_DOWN))
-        {
-            // 아래쪽 이동
-            owner->transform.position.z -= 1.0f * deltaTime;
-        }
-
-        if (input.IsKey('Q'))
-        {
-            // 위쪽 이동
-            owner->transform.position.y -= 1.0f * deltaTime;
-        }
-
-        if (input.IsKey('E'))
-        {
-            // 아래쪽 이동
-            owner->transform.position.y += 1.0f * deltaTime;
-        }
     }
 
     void CameraComponent::Draw()
@@ -101,8 +53,11 @@ namespace Blue
         data.viewMatrix = Matrix4::Translation(owner->transform.position * -1.0f) * Matrix4::Transpose(Matrix4::Rotation(owner->transform.rotation));
 
         // 투영 행렬 설정
-        data.projectionMatrix = Matrix4::Perspective(90.0f, (float)Engine::Get().Width(), (float)Engine::Get().Height(), 0.1f, 100.0f);
-                
+        data.projectionMatrix = Matrix4::Perspective(60.0f, (float)Engine::Get().Width(), (float)Engine::Get().Height(), 0.1f, 100.0f);
+
+        // 카메라 위치 설정
+        data.cameraPosition = owner->transform.position;
+        
         static ID3D11DeviceContext& context = Engine::Get().Context();
 
         // 전치 행렬 (CPU와 GPU가 행렬을 다루는 방식이 달라서)
