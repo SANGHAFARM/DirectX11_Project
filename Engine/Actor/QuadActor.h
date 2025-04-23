@@ -9,5 +9,7 @@ namespace Blue
     public:
         QuadActor();
         ~QuadActor() = default;
+
+        void Tick(float deltaTime) override;
     };    
 }

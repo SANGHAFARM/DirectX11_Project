@@ -27,5 +27,11 @@ namespace Blue
 
 		// ≥Î∏÷ (π˝º±, Normal) ∫§≈Õ
 		Vector3 normal;
+
+		// ≈∫¡®∆Æ (Tangent) ∫§≈Õ
+		Vector3 tangent;
+
+		// πŸ¿Ã≈∫¡®∆Æ (BiTangent) ∫§≈Õ
+		Vector3 bitangent;
 	};
 }
