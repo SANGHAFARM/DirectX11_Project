@@ -24,6 +24,9 @@ namespace Blue
 
         // 셰이더 설정 함수
         void AddShader(std::weak_ptr<Shader> newShader);
+
+        // 렌더 텍스처 사용 여부 함수
+        bool UseRenderTexture();
         
     private:
         // 메시(모델링) 데이터

@@ -1,12 +1,14 @@
 #include "Renderer.h"
-#include "../Math/Vector3.h"
-#include "TriangleMesh.h"
-#include "QuadMesh.h"
+#include "RenderTexture.h"
+
+#include "Resource/TextureLoader.h"
+#include "Component/StaticMeshComponent.h"
+
 #include "Core/Common.h"
+#include "Core/Type.h"
 #include "Level/Level.h"
 #include "Actor/Actor.h"
 
-#include <vector>
 #include <d3dcompiler.h>
 
 namespace Blue
@@ -185,8 +187,54 @@ namespace Blue
 		{
 			return;
 		}
-		
+
+		// Phase-1
+		for (int i = 0; i < (int)TextureLoader::Get().renderTextures.size(); i++)
+		{
+			// 렌더 텍스처 가져오기
+			auto renderTexture = TextureLoader::Get().renderTextures[i];
+
+			EmptyRTVsAndSRVs();
+			
+			// 렌더 타겟 설정
+			context->OMSetRenderTargets(1, renderTexture->GetRenderTargetAddress(), renderTexture->GetDepthStencilView());
+			
+			// 지우기
+			float color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+			context->ClearRenderTargetView(renderTexture->GetRenderTarget(), color);
+			context->ClearDepthStencilView(renderTexture->GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+			// 그리기
+			// 카메라 바인딩
+			if (level->GetCamera())
+			{
+				level->GetCamera()->Draw();
+			}
+
+			for (uint32 actorIndex = 0; actorIndex < level->ActorCount(); actorIndex++)
+			{
+				// 액터 가져오기
+				auto actor = level->GetActor(actorIndex);
+
+				// 렌더 텍스처 사용 여부 확인
+				auto meshComp = actor->GetComponent<StaticMeshComponent>();
+				if (meshComp && meshComp->UseRenderTexture())
+				{
+					continue;
+				}
+				
+				// Draw
+				if (actor->IsActive())
+				{
+					actor->Draw();
+				}
+			}
+		}
+
+		// Final-Phase
 		// 그리기 전 작업 (BeginScene)
+		EmptyRTVsAndSRVs();
+		
 		context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 
 		// 지우기/Clear
@@ -195,6 +243,7 @@ namespace Blue
 		context->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 		// Draw
+		// 카메라 바인딩
 		if (level->GetCamera())
 		{
 			level->GetCamera()->Draw();
@@ -295,5 +344,14 @@ namespace Blue
 		context->RSSetViewports(1, &viewport);
 
 		isResizing = false;
+	}
+
+	void Renderer::EmptyRTVsAndSRVs()
+	{
+		static ID3D11RenderTargetView* nullRTV[8] = {};
+		context->OMSetRenderTargets(1, nullRTV, nullptr);
+
+		static ID3D11ShaderResourceView* nullSRVs[16] = {};
+		context->PSSetShaderResources(0, _countof(nullSRVs), nullSRVs);
 	}
 }
